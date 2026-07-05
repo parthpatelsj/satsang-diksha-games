@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { ConfettiBurst } from "./Fx"
+import { sfx } from "../lib/sfx"
 import { TEAMS, shlokLines } from "../data/shloks"
 
 const PARTICLES = 24
@@ -9,10 +10,17 @@ export default function ResultScreen({ correct, team, name, beadNumber, prevOwne
   const prevObj = prevOwner ? TEAMS.find((t) => t.id === prevOwner) : null
   const stole = correct && prevOwner && prevOwner !== team
 
+  // Ref guard: StrictMode double-runs effects in dev — play the sting once.
+  const played = useRef(false)
   useEffect(() => {
+    if (!played.current) {
+      played.current = true
+      if (correct) sfx.win()
+      else sfx.lose()
+    }
     const id = setTimeout(onDone, 7000)
     return () => clearTimeout(id)
-  }, [onDone])
+  }, [onDone, correct])
 
   return (
     <div className="screen center-screen result" onClick={onDone}>

@@ -10,7 +10,7 @@ export function defaultState() {
     beadsByBatch: {},              // { "1": [null | teamId x 25], ... }
     totals: { "2A": 0, "2B": 0, "3": 0 }, // lifetime captures per group
     history: [],                   // [{ name, team, ts, shlokId, type, correct, prevOwner }]
-    settings: { cooldownEnabled: true },
+    settings: { cooldownEnabled: true, soundEnabled: true },
   }
 }
 

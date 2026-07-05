@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import { ConfettiBurst } from "./Fx"
+import { sfx } from "../lib/sfx"
 import { CHALLENGE_TYPES, pickWeightedType } from "../lib/challenges"
 
 const SEG = 360 / CHALLENGE_TYPES.length
@@ -23,10 +24,12 @@ export default function CharkhoWheel({ playerName, onResult }) {
     const target = 360 * 5 + (360 - (i * SEG + SEG / 2)) + jitter
     setSpinning(true)
     setRotation((r) => r + target - (r % 360))
+    sfx.spin(4.2)
     // Timer, not transitionend — throttled/background tabs can drop the event.
     setTimeout(() => {
       setSpinning(false)
       setLanded(CHALLENGE_TYPES.find((t) => t.key === typeKey))
+      sfx.land()
       setTimeout(() => onResult(typeKey), 1600)
     }, 4200)
   }

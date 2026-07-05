@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { SHLOKS } from "./data/shloks"
 import { buildChallenge, chooseBead } from "./lib/challenges"
 import { loadState, saveState, getBeads, cooldownRemaining } from "./lib/storage"
+import { sfx } from "./lib/sfx"
 import AttractMode from "./components/AttractMode"
 import TeamSelect from "./components/TeamSelect"
 import NameEntry from "./components/NameEntry"
@@ -20,6 +21,7 @@ export default function App() {
   const overrideTaps = useRef(0)
 
   useEffect(() => saveState(state), [state])
+  useEffect(() => { sfx.setMuted(state.settings.soundEnabled === false) }, [state.settings.soundEnabled])
 
   const batchShloks = SHLOKS
     .filter((s) => s.id >= state.batchStart && s.id < state.batchStart + 25)

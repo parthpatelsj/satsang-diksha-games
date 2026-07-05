@@ -110,6 +110,17 @@ export default function AdminPanel({ state, setState, onClose }) {
           >
             3-min player cooldown: {state.settings.cooldownEnabled ? "ON" : "OFF"}
           </button>
+          <button
+            className={`btn-admin ${state.settings.soundEnabled ? "btn-admin--active" : ""}`}
+            onClick={() =>
+              setState((s) => ({
+                ...s,
+                settings: { ...s.settings, soundEnabled: !s.settings.soundEnabled },
+              }))
+            }
+          >
+            Sound effects: {state.settings.soundEnabled ? "ON" : "OFF"}
+          </button>
         </div>
       </div>
 
