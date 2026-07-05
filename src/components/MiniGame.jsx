@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { ConfettiBurst } from "./Fx"
+import { sfx } from "../lib/sfx"
 
 // Bonus arcade round before the shlok challenge — one of three quick games,
 // picked at random. Win = 🪔 Second Chance on the challenge. All games work
@@ -66,6 +67,7 @@ function DiyaCatch({ onEnd, setHud }) {
           setTimeout(() => el.remove(), 450)
           s.diyas.splice(s.diyas.indexOf(d), 1)
           s.caught++
+          sfx.pop()
           if (s.caught >= 8) { s.done = true; return onEnd(true) }
         } else if (d.y > 106) {
           d.el.remove()
@@ -119,7 +121,7 @@ function LionLeap({ onEnd, setHud }) {
       nextSpawn: performance.now() + 1000,
     })
 
-    const jump = () => { if (s.y <= 0) s.vy = 105 }
+    const jump = () => { if (s.y <= 0) { s.vy = 105; sfx.jump() } }
     const key = (e) => {
       if (e.code === "Space" || e.key === "ArrowUp") { e.preventDefault(); jump() }
     }
@@ -218,6 +220,7 @@ function MalaTap({ onEnd, setHud }) {
     if (!lit[i] || doneRef.current) return
     setLit((l) => ({ ...l, [i]: false }))
     scoreRef.current++
+    sfx.pop()
     force((n) => n + 1)
     if (scoreRef.current >= 12) { doneRef.current = true; onEnd(true) }
   }
@@ -274,6 +277,8 @@ export default function MiniGame({ playerName, onDone }) {
 
   const end = (won) => {
     setPhase(won ? "won" : "lost")
+    if (won) sfx.bonus()
+    else sfx.lose()
     setTimeout(() => onDone(won), 2000)
   }
 
@@ -294,7 +299,7 @@ export default function MiniGame({ playerName, onDone }) {
         {phase === "play" && <div className="play-hint">{game.controls}</div>}
 
         {phase === "intro" && (
-          <div className="minigame-overlay minigame-overlay--tappable" onClick={() => setPhase("play")}>
+          <div className="minigame-overlay minigame-overlay--tappable" onClick={() => { sfx.tap(); setPhase("play") }}>
             <h2 className="screen-title">{game.title}</h2>
             <p className="minigame-text">
               {game.howTo}<br />
@@ -305,7 +310,7 @@ export default function MiniGame({ playerName, onDone }) {
             <p className="minigame-countdown">Starting in {countdown}…</p>
             <button
               className="btn-ghost"
-              onClick={(e) => { e.stopPropagation(); onDone(false) }}
+              onClick={(e) => { e.stopPropagation(); sfx.back(); onDone(false) }}
             >
               Skip to challenge ▶
             </button>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { ConfettiBurst } from "./Fx"
+import { sfx } from "../lib/sfx"
 
 const TIME_LIMIT = 45 // seconds — keeps walk-up turns quick
 
@@ -15,6 +16,8 @@ export default function ChallengeScreen({ challenge, beadNumber, bonus = false, 
   const finish = (correct) => {
     if (outcome) return
     setOutcome(correct ? "correct" : "wrong")
+    if (correct) sfx.correct()
+    else sfx.wrong()
     setTimeout(() => onComplete(correct), 1400)
   }
 
@@ -22,12 +25,14 @@ export default function ChallengeScreen({ challenge, beadNumber, bonus = false, 
   const secondChance = () => {
     setBonusLeft(false)
     setBonusFlash(true)
+    sfx.bonus()
     setTimeout(() => setBonusFlash(false), 1300)
   }
 
   useEffect(() => {
     if (outcome) return
     if (timeLeft <= 0) { finish(false); return }
+    if (timeLeft <= 5) sfx.tick()
     const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000)
     return () => clearTimeout(id)
   }, [timeLeft, outcome]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -48,6 +53,7 @@ export default function ChallengeScreen({ challenge, beadNumber, bonus = false, 
 
   const tapChip = (chip) => {
     if (outcome || bonusFlash || filled.includes(chip.id)) return
+    sfx.tap()
     const next = [...filled, chip.id]
     if (next.length === challenge.answer.length) {
       const texts = next.map((id) => challenge.chips.find((c) => c.id === id).text)
@@ -143,7 +149,7 @@ export default function ChallengeScreen({ challenge, beadNumber, bonus = false, 
           <button
             className="btn-ghost"
             disabled={filled.length === 0 || !!outcome}
-            onClick={() => setFilled(filled.slice(0, -1))}
+            onClick={() => { sfx.back(); setFilled(filled.slice(0, -1)) }}
           >
             ↩ Undo
           </button>

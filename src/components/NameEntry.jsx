@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { sfx } from "../lib/sfx"
 
 const ROWS = ["ABCDEFGHI", "JKLMNOPQR", "STUVWXYZ"]
 
@@ -6,7 +7,10 @@ const ROWS = ["ABCDEFGHI", "JKLMNOPQR", "STUVWXYZ"]
 export default function NameEntry({ team, onSubmit, onBack }) {
   const [name, setName] = useState("")
 
-  const add = (ch) => setName((n) => (n.length < 10 ? n + ch : n))
+  const add = (ch) => {
+    sfx.key()
+    setName((n) => (n.length < 10 ? n + ch : n))
+  }
 
   return (
     <div className="screen center-screen">
@@ -27,17 +31,17 @@ export default function NameEntry({ team, onSubmit, onBack }) {
           </div>
         ))}
         <div className="kb-row">
-          <button className="kb-key kb-wide" onClick={() => setName(name.slice(0, -1))}>⌫</button>
+          <button className="kb-key kb-wide" onClick={() => { sfx.back(); setName(name.slice(0, -1)) }}>⌫</button>
           <button
             className="kb-key kb-wide kb-go"
             disabled={name.trim().length < 2}
-            onClick={() => onSubmit(name.trim())}
+            onClick={() => { sfx.select(); onSubmit(name.trim()) }}
           >
             GO ▶
           </button>
         </div>
       </div>
-      <button className="btn-ghost" onClick={onBack}>← Back</button>
+      <button className="btn-ghost" onClick={() => { sfx.back(); onBack() }}>← Back</button>
     </div>
   )
 }

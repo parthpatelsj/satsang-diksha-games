@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import MalaBoard from "./MalaBoard"
 import Standings from "./Standings"
 import { FloatingBits } from "./Fx"
+import { sfx } from "../lib/sfx"
 import { TEAMS, GOAL_TEXT, shlokLines } from "../data/shloks"
 
 const PANELS = ["standings", "ticker", "shlok", "goal"]
@@ -34,7 +35,7 @@ export default function AttractMode({ beads, batchStart, totals, history, shloks
   ]
 
   return (
-    <div className="screen attract" onClick={onPlay}>
+    <div className="screen attract" onClick={() => { sfx.select(); onPlay() }}>
       <FloatingBits />
       <h1 className="attract-title" onClick={handleTitleTap}>
         <span className="title-om">🪷</span> Sinh Santano Charkho <span className="title-om">🪷</span>
